@@ -1,6 +1,9 @@
 defmodule WebStats.Mixfile do
   use Mix.Project
 
+  @moduledoc """
+  Define the structure of the project
+  """
   def project do
     [app: :web_stats,
      version: "0.0.1",
@@ -14,8 +17,8 @@ defmodule WebStats.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger],
-     mod: {WebStats, []}]
+    [applications: [:logger, :httpoison],
+      mod: {WebStats, []}]
   end
 
   # Dependencies can be Hex packages:
@@ -28,6 +31,8 @@ defmodule WebStats.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:httpoison, "~> 0.5"},
+    ]
   end
 end
