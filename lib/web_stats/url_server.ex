@@ -30,4 +30,10 @@ defmodule WebStats.UrlServer do
       IO.inspect set
     end
   end
+
+  def clear_state do
+    Agent.update __MODULE__, fn set ->
+      MapSet.new
+    end
+  end
 end

@@ -1,3 +1,9 @@
+defmodule Assignment3 do
+  def startOn(url, args \\ []) do
+    WebStats.startOn(url, args)
+  end
+end
+
 defmodule WebStats do
   @doc """
     Initializes the first url website link to crawl.
@@ -6,7 +12,6 @@ defmodule WebStats do
     max_pages = args[:maxPages] || 10
     max_depth = args[:maxDepth] || 3
 
-    IO.puts "URL: #{url}"
     crawl_link(url, max_pages, max_depth)
   end
 
@@ -20,7 +25,20 @@ defmodule WebStats do
     IO.puts "\nTOTALS\n"
     WebStats.TagServer.pretty_print
 
+    WebStats.UrlServer.clear_state
+    clear_tag_server_states(urls_crawled)
+
     {:ok}
+  end
+
+  def clear_tag_server_states([]) do
+    WebStats.TagServer.clear_state # __MODULE__ state default
+    {:ok}
+  end
+
+  def clear_tag_server_states([url|urls]) do
+    WebStats.TagServer.clear_state(url)
+    clear_tag_server_states(urls)
   end
 
   def print_tag_count_for([]) do
@@ -28,20 +46,18 @@ defmodule WebStats do
   end
 
   def print_tag_count_for([url|urls]) do
-    IO.puts "URL: #{url}"
     WebStats.TagServer.pretty_print(url)
     print_tag_count_for(urls)
   end
 
-  def get_all([], depth, max_pages, max_depth) do
+  def get_all([], _depth, _max_pages, _max_depth) do
     {:ok}
   end
 
-  def get_all(urls_to_crawl, depth, max_pages, max_depth) do
-    Enum.each urls_to_crawl, fn url ->
-      task = Task.async(fn -> get(url, depth, max_pages, max_depth) end)
-      Task.await(task, 10_000)
-    end
+  def get_all([url|urls_to_crawl], depth, max_pages, max_depth) do
+    task = Task.async(fn -> get(url, depth, max_pages, max_depth) end)
+    Task.await(task, 10_000)
+    get_all(urls_to_crawl, depth, max_pages, max_depth)
   end
 
   def get(url, depth, max_pages, max_depth) do
