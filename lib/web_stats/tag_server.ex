@@ -1,5 +1,25 @@
 defmodule WebStats.TagServer do
-  def hello_world do
-    IO.puts "Hello World"
+  def start_link(url \\ __MODULE__) do
+    Agent.start_link(fn -> %{} end, name: url)
+  end
+
+  def put_tags(url, tags) do
+    Agent.update url, fn map ->
+      Map.merge map, tags, fn tag, m, t ->
+        m + t
+      end
+    end
+
+    Agent.update __MODULE__, fn map ->
+      Map.merge map, tags, fn tag, m, t ->
+        m + t
+      end
+    end
+  end
+
+  def pretty_print(url \\ __MODULE__) do
+    Agent.get url, fn map ->
+      IO.inspect map
+    end
   end
 end
