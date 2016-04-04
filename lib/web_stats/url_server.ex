@@ -32,7 +32,7 @@ defmodule WebStats.UrlServer do
   end
 
   def clear_state do
-    Agent.update __MODULE__, fn set ->
+    Agent.update __MODULE__, fn _set ->
       MapSet.new
     end
   end

@@ -7,10 +7,7 @@ defmodule WebStats.TagParser do
     collect_tag_stats(html_lines, tags, links)
   end
 
-  def collect_tag_stats([], tags, links) do
-    {tags, links}
-  end
-
+  def collect_tag_stats([], tags, links), do: {tags, links}
   def collect_tag_stats([line|lines], tags, links) do
     tag_match = Regex.run(~r/< ?([A-Za-z]+)/i, line)
     unless is_nil(tag_match) do
@@ -41,6 +38,4 @@ defmodule WebStats.TagParser do
       elem(link_match, 1)
     end
   end
-
-
 end
