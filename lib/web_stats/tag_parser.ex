@@ -22,9 +22,7 @@ defmodule WebStats.TagParser do
 
       if tag === "a" do
         link = retrieve_link_from(line)
-        unless is_nil(link) do
-          links = MapSet.put(links, link)
-        end
+        unless is_nil(link), do: links = MapSet.put(links, link)
       end
     end
 
@@ -33,9 +31,6 @@ defmodule WebStats.TagParser do
 
   def retrieve_link_from(line) do
     link_match = Regex.run(~r/href=\"((http|https):[^ ]+)\"/i, line)
-    unless is_nil(link_match) do
-      link_match = List.to_tuple(link_match)
-      elem(link_match, 1)
-    end
+    unless is_nil(link_match), do: Enum.at(link_match, 1)
   end
 end
