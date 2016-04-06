@@ -27,7 +27,7 @@ defmodule WebStats.UrlServer do
 
   def print_pages do
     Agent.get __MODULE__, fn set ->
-      IO.inspect set
+      IO.inspect(set, limit: :infinity)
     end
   end
 

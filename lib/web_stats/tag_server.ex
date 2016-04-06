@@ -19,7 +19,7 @@ defmodule WebStats.TagServer do
 
   def pretty_print(url \\ __MODULE__) do
     Agent.get url, fn map ->
-      IO.inspect map
+      IO.inspect(map, limit: :infinity)
     end
   end
 
