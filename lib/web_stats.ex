@@ -11,29 +11,29 @@ defmodule WebStats do
 
   @doc """
   Main method that accepts a URL to start crawling along with any options.
+  Once program is finished crawling based on options passed, we print out the
+  results and clear worker states.
   """
   def startOn(url, args \\ []) do
     max_pages = args[:maxPages] || 10
     max_depth = args[:maxDepth] || 3
 
     crawl_link(url, max_pages, max_depth)
-  end
-
-  @doc """
-  Triggers the link to children workers, and crawls the URL received.
-  Once program is finished crawling based on options passed, we print out the
-  results and clear worker states.
-  """
-  def crawl_link(url, max_pages, max_depth) do
-    WebStats.UrlServer.start_link
-    WebStats.TagServer.start_link
-    get_all([url], 1, max_pages, max_depth)
 
     urls_crawled = MapSet.to_list WebStats.UrlServer.get_pages
     unless Enum.empty?(urls_crawled) do
       print_results_for urls_crawled
       clear_states_for urls_crawled
     end
+  end
+
+  @doc """
+  Triggers the link to children workers, and crawls the URL received.
+  """
+  def crawl_link(url, max_pages, max_depth) do
+    WebStats.UrlServer.start_link
+    WebStats.TagServer.start_link
+    get_all([url], 1, max_pages, max_depth)
 
     {:ok}
   end
@@ -85,7 +85,7 @@ defmodule WebStats do
         "Max pages reached"
       url |> String.to_atom |> WebStats.UrlServer.has_page? ->
         "Page already crawled"
-      :else ->
+      :else_we_crawl ->
         url_atom = String.to_atom(url)
 
         case HTTPoison.get(url) do
